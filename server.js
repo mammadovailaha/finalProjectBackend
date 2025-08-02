@@ -65,6 +65,9 @@ app.use("/api/quick-contacts", quickContactRoutes);
 const quickRegistrationRoutes = require("./routes/quickRegistrations");
 app.use("/api/quick-registrations", quickRegistrationRoutes);
 
+const chatbotRoutes = require("./routes/chatbotRoutes");
+app.use("/api/chatbot", chatbotRoutes);
+
 // Serverə fallback (404 üçün)
 app.use( (req, res) => {
   res.status(404).json({ message: "Route tapılmadı" });
