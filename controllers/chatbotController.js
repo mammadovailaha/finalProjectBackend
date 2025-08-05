@@ -1,21 +1,28 @@
-const Message=require("../models/Message");
-const GetBotReply=(message)=>{
-if(message.toLowerCase().includes("salam")) return "Salam! Necə kömək edə bilərəm?";
-if(message.toLowerCase().includes("kurs")) return "Hazırda davam edən kurslarımız haqqında məlumat istəyirsiniz?";
-  return "Bağışlayın, sualınızı tam anlamadım.";
-}
+const Message = require("../models/Message");
 
 const sendMessage = async (req, res) => {
   try {
     const { userMessage } = req.body;
-    const botReply = getBotReply(userMessage);
 
-    const newMessage = new Message({ userMessage, botReply });
+    if (!userMessage) {
+      return res.status(400).json({ error: "userMessage göndərilməyib" });
+    }
+
+    // Botun cavabını burada sadə yazırıq (hazırda ağıllı deyil)
+    const botReply = `Sən dedin: ${userMessage}`;
+
+    // Mesajı DB-ya qeyd et
+    const newMessage = new Message({
+      userMessage,
+      botReply
+    });
+
     await newMessage.save();
 
-    res.status(200).json({ success: true, reply: botReply });
+    res.json({ userMessage, botReply });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Xəta baş verdi", error });
+    console.error("Chatbot xətası:", error);
+    res.status(500).json({ error: "Server xətası" });
   }
 };
 

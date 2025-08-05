@@ -43,8 +43,6 @@ app.use("/api/partners", partnersRoutes);
 const booksRoutes = require("./routes/books");
 app.use("/api/books", booksRoutes);
 
-
-
 const staffRoutes = require("./routes/staff");
 app.use("/api/staff", staffRoutes);
 
@@ -59,6 +57,9 @@ app.use("/api/quick-contacts", quickContactRoutes);
 
 const quickRegistrationRoutes = require("./routes/quickRegistrations");
 app.use("/api/quick-registrations", quickRegistrationRoutes);
+
+const examResultRoutes=require("./routes/examResult");
+app.use("/api/exam-results",examResultRoutes );
 
 const chatbotRoutes = require("./routes/chatbotRoutes");
 app.use("/api/chatbot", chatbotRoutes);

@@ -5,7 +5,7 @@ const getExamResult = async (req, res) => {
   try {
     const { exam, bookletNumber } = req.body;
 
-    const result = await ExamResult.findOne({ exam, bookletNumber });
+    const result = await ExamResult.findOne({ exam, bookletNumber, score, name });
 
     if (!result) {
       return res.status(404).json({ message: "Nəticə tapılmadı" });
