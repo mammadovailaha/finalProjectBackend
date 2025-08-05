@@ -1,6 +1,6 @@
 const Staff=require('../models/Staff');
 
-const getAllStaffs=(req,res)=>{
+const getAllStaff=(req,res)=>{
     Staff.find()
     .then(staffs => res.json(staffs))
     .catch(err => res.status(500).json({ message: "Server error" }));
@@ -53,7 +53,7 @@ const deleteStaffById=(req,res)=>{
 
 
 module.exports={
-    getAllStaffs,
+    getAllStaff,
     getStaffById,
     createStaff,
     updateStaffById,

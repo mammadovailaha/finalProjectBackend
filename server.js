@@ -5,13 +5,9 @@ require("dotenv").config();
 
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB-yə uğurla qoşuldu"))
-.catch((err) => console.error("MongoDB-yə qoşularkən xəta baş verdi:", err));
-
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log("✅ MongoDB connected successfully"))
+    .catch(err => console.error("❌ MongoDB connection error:", err));
 app.use(cors());
 app.use(express.json());
 
@@ -26,7 +22,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server ${PORT} portunda işləyir`);
 });
-const countryRoutes = require("./routes/countries");
+const countryRoutes = require("./routes/country");
 app.use("/api/countries", countryRoutes);
 
 const examRoutes = require("./routes/exams");
@@ -47,8 +43,7 @@ app.use("/api/partners", partnersRoutes);
 const booksRoutes = require("./routes/books");
 app.use("/api/books", booksRoutes);
 
-const blogsRoutes = require("./routes/blogs");
-app.use("/api/blogs", blogsRoutes);
+
 
 const staffRoutes = require("./routes/staff");
 app.use("/api/staff", staffRoutes);
