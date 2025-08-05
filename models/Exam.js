@@ -6,7 +6,7 @@ const examSchema=new mongoose.Schema({
         required: true,
     },
     date: {
-        type: string,
+        type: String,
         required: true,
     },
     examType: {
