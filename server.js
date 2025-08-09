@@ -58,8 +58,8 @@ app.use("/api/quick-contacts", quickContactRoutes);
 const quickRegistrationRoutes = require("./routes/quickRegistrations");
 app.use("/api/quick-registrations", quickRegistrationRoutes);
 
-const examResultRoutes=require("./routes/examResult");
-app.use("/api/exam-results",examResultRoutes );
+const examResultsRoutes = require("./routes/examResult");
+app.use("/api/exam-results", examResultsRoutes);
 
 const chatbotRoutes = require("./routes/chatbotRoutes");
 app.use("/api/chatbot", chatbotRoutes);

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const videoSchema = new mongoose.Schema({
+const faqSchema = new mongoose.Schema({
     question:{
         type: String,
         required: true,
@@ -10,5 +10,5 @@ const videoSchema = new mongoose.Schema({
     }
 } , { timestamps: true });
 
-const Video = mongoose.model("Video", videoSchema);
-module.exports = Video;
+const faqModel = mongoose.model("Faq", faqSchema);
+module.exports = faqModel;

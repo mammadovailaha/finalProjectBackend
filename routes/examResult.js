@@ -1,8 +1,10 @@
 // routes/examResults.js
 const express = require("express");
 const router = express.Router();
-const { getExamResult } = require("../controllers/examResultController");
+const { addExamResult, getExamResult } = require("../controllers/examResultController");
 
-router.post("/", getExamResult); // POST /api/exam-results
+router.post("/add", addExamResult);
+router.post("/get", getExamResult);
 
 module.exports = router;
+

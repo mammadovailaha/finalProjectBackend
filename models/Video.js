@@ -9,5 +9,5 @@ const videoSchema = new mongoose.Schema({
         required: true,
     }
 }, { timestamps: true });
-const Video = mongoose.models.Video || mongoose.model("Video", videoSchema);
-module.exports = Video;
+const VideoData = mongoose.models.Video || mongoose.model("Video", videoSchema);
+module.exports = VideoData;

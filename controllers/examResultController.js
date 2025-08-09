@@ -5,7 +5,7 @@ const getExamResult = async (req, res) => {
   try {
     const { exam, bookletNumber } = req.body;
 
-    const result = await ExamResult.findOne({ exam, bookletNumber, score, name });
+    const result = await ExamResult.findOne({ exam, bookletNumber });
 
     if (!result) {
       return res.status(404).json({ message: "Nəticə tapılmadı" });
@@ -17,4 +17,23 @@ const getExamResult = async (req, res) => {
   }
 };
 
-module.exports = { getExamResult };
+
+
+const addExamResult = async (req, res) => {
+  try {
+    const { exam, bookletNumber, score, name } = req.body;
+
+    if (!exam || !bookletNumber || score === undefined) {
+      return res.status(400).json({ message: "exam, bookletNumber və score mütləqdir" });
+    }
+
+    const newResult = new ExamResult({ exam, bookletNumber, score, name });
+    await newResult.save();
+
+    res.status(201).json({ message: "Nəticə əlavə edildi", result: newResult });
+  } catch (error) {
+    res.status(500).json({ message: "Server xətası", error: error.message });
+  }
+};
+
+module.exports = { addExamResult, getExamResult };
