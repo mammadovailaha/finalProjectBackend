@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-
+import intentRoutes from "./routes/intentRoute.js";
 const app = express();
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -61,8 +61,10 @@ app.use("/api/quick-registrations", quickRegistrationRoutes);
 const examResultsRoutes = require("./routes/examResult");
 app.use("/api/exam-results", examResultsRoutes);
 
-const chatbotRoutes = require("./routes/chatbotRoutes");
-app.use("/api/chatbot", chatbotRoutes);
+// const chatbotRoutes = require("./routes/chatbotRoutes");
+// app.use("/api/chatbot", chatbotRoutes);
+mongoose.connect("mongodb://localhost:27017/chatbotDB");
+app.use("/api/intents", intentRoutes);
 
 // Serverə fallback (404 üçün)
 app.use( (req, res) => {

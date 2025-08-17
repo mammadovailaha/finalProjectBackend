@@ -1,148 +1,73 @@
-// controllers/chatbotController.js
-const Message = require("../models/Message");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+// const Registration = require("../models/Registration");
 
-// Gemini AI konfiqurasiyası
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// // hər sessiya üçün müvəqqəti qeydiyyat məlumatı saxlayırıq
+// const registrationSessions = new Map();
 
-// Söhbət tarixçəsi saxlamaq üçün (sessiya əsaslı)
-const chatSessions = new Map();
+// const sendMessage = async (req, res) => {
+//   const { userMessage, sessionId = 'default' } = req.body;
 
-const sendMessage = async (req, res) => {
-  try {
-    const { userMessage, sessionId = 'default' } = req.body;
+//   if (!userMessage) {
+//     return res.status(400).json({ error: "userMessage göndərilməyib" });
+//   }
 
-    if (!userMessage) {
-      return res.status(400).json({ error: "userMessage göndərilməyib" });
-    }
+//   // Əgər qeydiyyat prosesi başlayıbsa → step-by-step yönləndir
+//   if (!registrationSessions.has(sessionId)) {
+//     registrationSessions.set(sessionId, { step: 0, data: {} });
+//   }
 
-    // Sessiya tarixçəsini al və ya yarat
-    if (!chatSessions.has(sessionId)) {
-      chatSessions.set(sessionId, []);
-    }
-    const history = chatSessions.get(sessionId);
+//   const session = registrationSessions.get(sessionId);
+//   let botReply = "";
 
-    try {
-      // AI-dan cavab al
-      const chat = model.startChat({
-        history: history.map(msg => ({
-          role: msg.role,
-          parts: [{ text: msg.text }]
-        })),
-        generationConfig: {
-          maxOutputTokens: 500,
-          temperature: 0.7,
-        },
-      });
+//   switch (session.step) {
+//     case 0:
+//       botReply = "Salam 👋 Kursa qeydiyyat üçün adınızı yazın:";
+//       session.step = 1;
+//       break;
 
-      // Azərbaycan dilində cavab vermək üçün prompt
-      const prompt = `Sən Azərbaycan dilində danışan köməkçi chatbotsan. 
-      İstifadəçinin sualına məntiqli və faydalı cavab ver.
-      İstifadəçi deyir: ${userMessage}`;
+//     case 1:
+//       session.data.name = userMessage;
+//       botReply = "Çox gözəl 👍 İndi soyadınızı yazın:";
+//       session.step = 2;
+//       break;
 
-      const result = await chat.sendMessage(prompt);
-      const botReply = result.response.text();
+//     case 2:
+//       session.data.surname = userMessage;
+//       botReply = "Əlaqə nömrənizi yazın:";
+//       session.step = 3;
+//       break;
 
-      // Tarixçəyə əlavə et
-      history.push(
-        { role: 'user', text: userMessage },
-        { role: 'model', text: botReply }
-      );
+//     case 3:
+//       session.data.phone = userMessage;
+//       botReply = "Hansı kursu seçirsiniz? (məs: Proqramlaşdırma, Dizayn, Dil kursu)";
+//       session.step = 4;
+//       break;
 
-      // Tarixçəni məhdudlaşdır (son 10 mesaj)
-      if (history.length > 20) {
-        history.splice(0, 2);
-      }
+//     case 4:
+//       session.data.course = userMessage;
+//       botReply = "Hansı filialda oxumaq istəyirsiniz?";
+//       session.step = 5;
+//       break;
 
-      // Mesajı DB-ya qeyd et
-      const newMessage = new Message({
-        userMessage,
-        botReply,
-        sessionId
-      });
+//     case 5:
+//       session.data.branch = userMessage;
 
-      await newMessage.save();
+//       // DB-yə qeyd et
+//       const newReg = new Registration(session.data);
+//       await newReg.save();
 
-      res.json({ 
-        userMessage, 
-        botReply,
-        sessionId 
-      });
+//       botReply = `Təşəkkürlər ✅ Qeydiyyat tamamlandı! 
+//       Ad Soyad: ${session.data.name} ${session.data.surname}
+//       Telefon: ${session.data.phone}
+//       Kurs: ${session.data.course}
+//       Filial: ${session.data.branch}`;
 
-    } catch (aiError) {
-      console.error("AI xətası:", aiError);
-      
-      // AI işləməsə sadə cavab ver
-      const fallbackReply = getFallbackReply(userMessage);
-      
-      const newMessage = new Message({
-        userMessage,
-        botReply: fallbackReply,
-        sessionId
-      });
+//       // sessiyanı sıfırla
+//       registrationSessions.delete(sessionId);
+//       break;
 
-      await newMessage.save();
+//     default:
+//       botReply = "Sualınızı tam başa düşmədim.";
+//   }
 
-      res.json({ 
-        userMessage, 
-        botReply: fallbackReply,
-        sessionId,
-        warning: "AI hazırda əlçatan deyil, sadə cavab verildi" 
-      });
-    }
-
-  } catch (error) {
-    console.error("Chatbot xətası:", error);
-    res.status(500).json({ error: "Server xətası" });
-  }
-};
-
-// Sadə cavab generatoru (AI işləməyəndə)
-const getFallbackReply = (userMessage) => {
-  const lowerMessage = userMessage.toLowerCase();
-  
-  if (lowerMessage.includes("salam") || lowerMessage.includes("hello")) {
-    return "Salam! Sizə necə kömək edə bilərəm?";
-  }
-  if (lowerMessage.includes("necəsən") || lowerMessage.includes("necesen")) {
-    return "Təşəkkür edirəm, yaxşıyam! Siz necəsiniz?";
-  }
-  if (lowerMessage.includes("sağ ol") || lowerMessage.includes("təşəkkür")) {
-    return "Buyurun, hər zaman kömək etməyə hazıram!";
-  }
-  if (lowerMessage.includes("kim") && lowerMessage.includes("sən")) {
-    return "Mən sizə kömək etmək üçün hazırlanmış chatbot-am.";
-  }
-  
-  return "Bağışlayın, sualınızı tam başa düşmədim. Başqa cür soruşa bilərsiniz?";
-};
-
-// Söhbət tarixçəsini təmizləmək
-const clearHistory = (req, res) => {
-  const { sessionId = 'default' } = req.body;
-  chatSessions.delete(sessionId);
-  res.json({ message: "Söhbət tarixçəsi təmizləndi" });
-};
-
-// Söhbət tarixçəsini almaq
-const getHistory = async (req, res) => {
-  try {
-    const { sessionId = 'default' } = req.query;
-    
-    const messages = await Message.find({ sessionId })
-      .sort({ createdAt: -1 })
-      .limit(20);
-    
-    res.json({ messages: messages.reverse() });
-  } catch (error) {
-    console.error("Tarixçə xətası:", error);
-    res.status(500).json({ error: "Server xətası" });
-  }
-};
-
-module.exports = { 
-  sendMessage,
-  clearHistory,
-  getHistory
-};
+//   res.json({ userMessage, botReply, sessionId });
+// };
