@@ -13,4 +13,4 @@ router.get("/history", chatbotController.getHistory);
 // Söhbət tarixçəsini təmizlə
 router.post("/clear", chatbotController.clearHistory);
 
-module.exports = router;
+module.exports = router; 
