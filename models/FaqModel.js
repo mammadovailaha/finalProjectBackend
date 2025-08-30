@@ -11,4 +11,4 @@ const faqSchema = new mongoose.Schema({
 } , { timestamps: true });
 
 const faqModel = mongoose.model("Faq", faqSchema);
-module.exports = faqModel;
+module.exports = faqModel;    
