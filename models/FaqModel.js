@@ -9,6 +9,6 @@ const faqSchema = new mongoose.Schema({
         required: true,
     }
 } , { timestamps: true });
-
+// FAQ model
 const faqModel = mongoose.model("Faq", faqSchema);
 module.exports = faqModel;    
