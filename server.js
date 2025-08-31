@@ -10,7 +10,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-app.use(cors());
+
 app.use(express.json());
 
 // Route-lar
@@ -69,13 +69,14 @@ app.use((req, res) => {
 });
 app.use(cors({
   origin: [
-    "http://localhost:5173",              // Local development
-    "https://edu-project-pi.vercel.app/"   
+    "http://localhost:5173",
+    "https://edu-project-pi.vercel.app"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 // Server
 const PORT = process.env.PORT || 5000;
