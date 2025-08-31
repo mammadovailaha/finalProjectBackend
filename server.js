@@ -1,54 +1,54 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+
+// Routers
+const quickContactRoutes = require("./routes/quickContactRoutes");
+const quickRegistrationRoutes = require("./routes/quickRegistrationRoutes");
+const staffRoutes = require("./routes/staffRoutes");
+const vacancyRoutes = require("./routes/vacancyRoutes");
+const vacancyFaqRoutes = require("./routes/vacancyFaqRoutes");
+const videoRoutes = require("./routes/videoRoutes");
+const faqRoutes = require("./routes/faqRoutes"); // yeni FAQ router
+const chatbotRoutes = require("./routes/chatbotRoutes");
 
 const app = express();
 
-// ✅ CORS və JSON parser middleware-ləri ən yuxarıda
-// app.use(cors({
-//   origin: [
-//     "http://localhost:5173",             // local frontend
-//     "https://edu-project-pi.vercel.app"  // deploy frontend
-//   ],
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// }));
+// Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ✅ MongoDB qoşulması
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ MongoDB connected successfully"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+// Routers
+app.use("/api/quick-contacts", quickContactRoutes);
+app.use("/api/quick-registrations", quickRegistrationRoutes);
+app.use("/api/staff", staffRoutes);
+app.use("/api/vacancies", vacancyRoutes);
+app.use("/api/vacancy-faqs", vacancyFaqRoutes);
+app.use("/api/videos", videoRoutes);
+app.use("/api/faqs", faqRoutes); // FAQ
+app.use("/api/chatbot", chatbotRoutes);
 
-
-// ✅ Route-lar
-app.use("/api/services", require("./routes/services"));
-app.use("/api/blogs", require("./routes/blogs"));
-app.use("/api/countries", require("./routes/country"));
-app.use("/api/exams", require("./routes/exams"));
-app.use("/api/faqs", require("./routes/faqs"));
-app.use("/api/videos", require("./routes/videos"));
-app.use("/api/branches", require("./routes/branches"));
-app.use("/api/partners", require("./routes/partners"));
-app.use("/api/books", require("./routes/books"));
-app.use("/api/staff", require("./routes/staff"));
-app.use("/api/vacancies", require("./routes/vacancies"));
-app.use("/api/vacancies-faqs", require("./routes/vacanciesFaqs"));
-app.use("/api/quick-contacts", require("./routes/quickContacts"));
-app.use("/api/quick-registrations", require("./routes/quickRegistrations"));
-app.use("/api/exam-results", require("./routes/examResult"));
-// app.use("/api/intent", require("./routes/intentRoute")); // lazım olsa aktivləşdir
-
-// ✅ 404 fallback
-app.use((req, res) => {
-  res.status(404).json({ message: "Route tapılmadı" });
+// MongoDB Connect
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log("MongoDB bağlantısı uğurla yaradıldı ✅");
+})
+.catch((err) => {
+  console.error("MongoDB xətası ❌", err);
 });
 
-// ✅ Server start
+// Health check
+app.get("/", (req, res) => {
+  res.send("Server işləyir 🚀");
+});
+
+// Server listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server ${PORT} portunda işləyir`);
+  console.log(`Server ${PORT}-portda işləyir 🚀`);
 });

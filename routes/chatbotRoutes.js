@@ -1,16 +1,9 @@
+const express = require("express");
+const router = express.Router();
+const chatbotController = require("../controllers/chatbotController");
 
-// // routes/chatbotRoutes.js
-// const express = require("express");
-// const router = express.Router();
-// const chatbotController = require("../controllers/chatbotController");
+router.post("/", chatbotController.sendMessage);
+router.get("/history", chatbotController.getHistory);
+router.post("/clear", chatbotController.clearHistory);
 
-// // Mesaj göndər
-// router.post("/", chatbotController.sendMessage);
-
-// // Söhbət tarixçəsini al
-// router.get("/history", chatbotController.getHistory);
-
-// // Söhbət tarixçəsini təmizlə
-// router.post("/clear", chatbotController.clearHistory);
-
-// module.exports = router; 
+module.exports = router;

@@ -1,73 +1,95 @@
-// const Registration = require("../models/Registration");
+const Registration = require("../models/Registration");
+const AIService = require("../services/aiService");
 
-// // hər sessiya üçün müvəqqəti qeydiyyat məlumatı saxlayırıq
-// const registrationSessions = new Map();
+// Hər sessiya üçün müvəqqəti qeydiyyat məlumatı
+const registrationSessions = new Map();
 
-// const sendMessage = async (req, res) => {
-//   const { userMessage, sessionId = 'default' } = req.body;
+// Chatbot mesaj controller
+const sendMessage = async (req, res) => {
+  const { userMessage, sessionId = 'default' } = req.body;
 
-//   if (!userMessage) {
-//     return res.status(400).json({ error: "userMessage göndərilməyib" });
-//   }
+  if (!userMessage) {
+    return res.status(400).json({ error: "userMessage göndərilməyib" });
+  }
 
-//   // Əgər qeydiyyat prosesi başlayıbsa → step-by-step yönləndir
-//   if (!registrationSessions.has(sessionId)) {
-//     registrationSessions.set(sessionId, { step: 0, data: {} });
-//   }
+  if (!registrationSessions.has(sessionId)) {
+    registrationSessions.set(sessionId, { step: 0, data: {} });
+  }
 
-//   const session = registrationSessions.get(sessionId);
-//   let botReply = "";
+  const session = registrationSessions.get(sessionId);
+  let botReply = "";
 
-//   switch (session.step) {
-//     case 0:
-//       botReply = "Salam 👋 Kursa qeydiyyat üçün adınızı yazın:";
-//       session.step = 1;
-//       break;
+  try {
+    switch (session.step) {
+      case 0:
+        botReply = "Salam 👋 Kursa qeydiyyat üçün adınızı yazın:";
+        session.step = 1;
+        break;
 
-//     case 1:
-//       session.data.name = userMessage;
-//       botReply = "Çox gözəl 👍 İndi soyadınızı yazın:";
-//       session.step = 2;
-//       break;
+      case 1:
+        session.data.name = userMessage;
+        botReply = "Çox gözəl 👍 İndi soyadınızı yazın:";
+        session.step = 2;
+        break;
 
-//     case 2:
-//       session.data.surname = userMessage;
-//       botReply = "Əlaqə nömrənizi yazın:";
-//       session.step = 3;
-//       break;
+      case 2:
+        session.data.surname = userMessage;
+        botReply = "Əlaqə nömrənizi yazın:";
+        session.step = 3;
+        break;
 
-//     case 3:
-//       session.data.phone = userMessage;
-//       botReply = "Hansı kursu seçirsiniz? (məs: Proqramlaşdırma, Dizayn, Dil kursu)";
-//       session.step = 4;
-//       break;
+      case 3:
+        session.data.phone = userMessage;
+        botReply = "Hansı kursu seçirsiniz? (məs: Proqramlaşdırma, Dizayn, Dil kursu)";
+        session.step = 4;
+        break;
 
-//     case 4:
-//       session.data.course = userMessage;
-//       botReply = "Hansı filialda oxumaq istəyirsiniz?";
-//       session.step = 5;
-//       break;
+      case 4:
+        session.data.course = userMessage;
+        botReply = "Hansı filialda oxumaq istəyirsiniz?";
+        session.step = 5;
+        break;
 
-//     case 5:
-//       session.data.branch = userMessage;
+      case 5:
+        session.data.branch = userMessage;
 
-//       // DB-yə qeyd et
-//       const newReg = new Registration(session.data);
-//       await newReg.save();
+        // DB-yə qeyd et
+        const newReg = new Registration(session.data);
+        await newReg.save();
 
-//       botReply = `Təşəkkürlər ✅ Qeydiyyat tamamlandı! 
-//       Ad Soyad: ${session.data.name} ${session.data.surname}
-//       Telefon: ${session.data.phone}
-//       Kurs: ${session.data.course}
-//       Filial: ${session.data.branch}`;
+        botReply = `Təşəkkürlər ✅ Qeydiyyat tamamlandı! 
+Ad Soyad: ${session.data.name} ${session.data.surname}
+Telefon: ${session.data.phone}
+Kurs: ${session.data.course}
+Filial: ${session.data.branch}`;
 
-//       // sessiyanı sıfırla
-//       registrationSessions.delete(sessionId);
-//       break;
+        registrationSessions.delete(sessionId);
+        break;
 
-//     default:
-//       botReply = "Sualınızı tam başa düşmədim.";
-//   }
+      default:
+        // AI servisi ilə cavab ver
+        botReply = await AIService.getAIResponse(userMessage);
+        break;
+    }
 
-//   res.json({ userMessage, botReply, sessionId });
-// };
+    res.json({ userMessage, botReply, sessionId });
+
+  } catch (error) {
+    console.error("Chatbot xətası:", error);
+    res.status(500).json({ error: "Chatbot cavab verə bilmir" });
+  }
+};
+
+// Tarixi al
+const getHistory = (req, res) => {
+  // Optional: Burada DB və ya session əsaslı tarixçə saxlaya bilərsən
+  res.json({ message: "Chat tarixçəsi hazırda lokal session-da yoxdur" });
+};
+
+// Tarixi sıfırla
+const clearHistory = (req, res) => {
+  registrationSessions.clear();
+  res.json({ message: "Chat tarixçəsi sıfırlandı" });
+};
+
+module.exports = { sendMessage, getHistory, clearHistory };
