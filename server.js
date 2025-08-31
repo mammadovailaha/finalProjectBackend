@@ -67,6 +67,15 @@ app.use("/api/exam-results", examResultsRoutes);
 app.use((req, res) => {
   res.status(404).json({ message: "Route tapılmadı" });
 });
+app.use(cors({
+  origin: [
+    "http://localhost:5173",              // Local development
+    "https://edu-project-pi.vercel.app/"   
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Server
 const PORT = process.env.PORT || 5000;
