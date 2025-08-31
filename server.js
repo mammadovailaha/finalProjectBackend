@@ -13,6 +13,14 @@ const videoRoutes = require("./routes/videoRoutes");
 const faqRoutes = require("./routes/faqRoutes"); // yeni FAQ router
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const serviceRoutes=require("./routes/services") ;
+const countryRoutes=require("./routes/country");
+const blogsRouter=require("./routes/blogs");
+const branchRouter=require("./routes/branches");
+const partnersRouter=require("./routes/partners");
+const brandsRouter=require("./routes/brands");
+const examRouter=require("./routes/exams");
+const examResultRouter=require("./routes/examResult");
+
 const app = express();
 
 // Middleware
@@ -30,6 +38,13 @@ app.use("/api/videos", videoRoutes);
 app.use("/api/faqs", faqRoutes); // FAQ
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/services",serviceRoutes );
+app.use("/api/countries",countryRoutes );
+app.use("/api/blogs",blogsRouter);
+app.use("/api/branches",branchRouter);
+app.use("/api/partners",partnersRouter);
+app.use("/api/brands",brandsRouter);
+app.use("/api/exams",examRouter);
+app.use("/api/exam-results",examResultRouter);
 // MongoDB Connect
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
