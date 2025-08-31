@@ -4,6 +4,18 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+app.use((req, res) => {
+  res.status(404).json({ message: "Route tapılmadı" });
+});
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://edu-project-pi.vercel.app"
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // MongoDB qoşulma
 mongoose.connect(process.env.MONGODB_URI)
@@ -64,18 +76,6 @@ app.use("/api/exam-results", examResultsRoutes);
 // app.use("/api/intent", intentRoutes);
 
 // 404 fallback
-app.use((req, res) => {
-  res.status(404).json({ message: "Route tapılmadı" });
-});
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://edu-project-pi.vercel.app"
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 
 // Server
