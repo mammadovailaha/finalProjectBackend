@@ -26,8 +26,8 @@ app.use("/api/countries", countryRoutes);
 const examRoutes = require("./routes/exams");
 app.use("/api/exams", examRoutes);
 
-const faqRoutes = require("./routes/faqs");
-app.use("/api/faqs", faqRoutes);
+// const faqRoutes = require("./routes/faqs");
+// app.use("/api/faqs", faqRoutes);
 
 const videosRoutes = require("./routes/videos");
 app.use("/api/videos", videosRoutes);
