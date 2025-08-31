@@ -12,7 +12,7 @@ const vacancyFaqRoutes = require("./routes/vacancyFaqRoutes");
 const videoRoutes = require("./routes/videoRoutes");
 const faqRoutes = require("./routes/faqRoutes"); // yeni FAQ router
 const chatbotRoutes = require("./routes/chatbotRoutes");
-
+const serviceRoutes=require("./routes/services") ;
 const app = express();
 
 // Middleware
@@ -29,7 +29,7 @@ app.use("/api/vacancy-faqs", vacancyFaqRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/faqs", faqRoutes); // FAQ
 app.use("/api/chatbot", chatbotRoutes);
-
+app.use("/api/services",serviceRoutes );
 // MongoDB Connect
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
