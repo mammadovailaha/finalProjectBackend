@@ -6,15 +6,16 @@ require("dotenv").config();
 const app = express();
 
 // ✅ CORS və JSON parser middleware-ləri ən yuxarıda
-app.use(cors({
-  origin: [
-    "http://localhost:5173",             // local frontend
-    "https://edu-project-pi.vercel.app"  // deploy frontend
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// app.use(cors({
+//   origin: [
+//     "http://localhost:5173",             // local frontend
+//     "https://edu-project-pi.vercel.app"  // deploy frontend
+//   ],
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+app.use(cors());
 app.use(express.json());
 
 // ✅ MongoDB qoşulması
