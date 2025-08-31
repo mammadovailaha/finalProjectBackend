@@ -4,81 +4,49 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-app.use((req, res) => {
-  res.status(404).json({ message: "Route tapılmadı" });
-});
+
+// ✅ CORS və JSON parser middleware-ləri ən yuxarıda
 app.use(cors({
   origin: [
-    "http://localhost:5173",
-    "https://edu-project-pi.vercel.app"
+    "http://localhost:5173",             // local frontend
+    "https://edu-project-pi.vercel.app"  // deploy frontend
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+app.use(express.json());
 
-// MongoDB qoşulma
+// ✅ MongoDB qoşulması
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
 
-app.use(express.json());
+// ✅ Route-lar
+app.use("/api/services", require("./routes/services"));
+app.use("/api/blogs", require("./routes/blogs"));
+app.use("/api/countries", require("./routes/country"));
+app.use("/api/exams", require("./routes/exams"));
+app.use("/api/faqs", require("./routes/faqs"));
+app.use("/api/videos", require("./routes/videos"));
+app.use("/api/branches", require("./routes/branches"));
+app.use("/api/partners", require("./routes/partners"));
+app.use("/api/books", require("./routes/books"));
+app.use("/api/staff", require("./routes/staff"));
+app.use("/api/vacancies", require("./routes/vacancies"));
+app.use("/api/vacancies-faqs", require("./routes/vacanciesFaqs"));
+app.use("/api/quick-contacts", require("./routes/quickContacts"));
+app.use("/api/quick-registrations", require("./routes/quickRegistrations"));
+app.use("/api/exam-results", require("./routes/examResult"));
+// app.use("/api/intent", require("./routes/intentRoute")); // lazım olsa aktivləşdir
 
-// Route-lar
-const blogsRoutes = require("./routes/blogs");
-app.use("/api/blogs", blogsRoutes);
+// ✅ 404 fallback
+app.use((req, res) => {
+  res.status(404).json({ message: "Route tapılmadı" });
+});
 
-const servicesRoutes = require("./routes/services");
-app.use("/api/services", servicesRoutes);
-
-const countryRoutes = require("./routes/country");
-app.use("/api/countries", countryRoutes);
-
-const examRoutes = require("./routes/exams");
-app.use("/api/exams", examRoutes);
-
-// const faqRoutes = require("./routes/faqs");
-// app.use("/api/faqs", faqRoutes);
-
-const videosRoutes = require("./routes/videos");
-app.use("/api/videos", videosRoutes);
-
-const branchRoutes = require("./routes/branches");
-app.use("/api/branches", branchRoutes);
-
-const partnersRoutes = require("./routes/partners");
-app.use("/api/partners", partnersRoutes);
-
-const booksRoutes = require("./routes/books");
-app.use("/api/books", booksRoutes);
-
-const staffRoutes = require("./routes/staff");
-app.use("/api/staff", staffRoutes);
-
-const vacancyRoutes = require("./routes/vacancies");
-app.use("/api/vacancies", vacancyRoutes);
-
-const vacancyFaqRoutes = require("./routes/vacanciesFaqs");
-app.use("/api/vacancies-faqs", vacancyFaqRoutes);
-
-const quickContactRoutes = require("./routes/quickContacts");
-app.use("/api/quick-contacts", quickContactRoutes);
-
-const quickRegistrationRoutes = require("./routes/quickRegistrations");
-app.use("/api/quick-registrations", quickRegistrationRoutes);
-
-const examResultsRoutes = require("./routes/examResult");
-app.use("/api/exam-results", examResultsRoutes);
-
-// // INTENT ROUTES (əgər bu ES6 ilə yazılıbsa → module.exports ilə export et)
-// const intentRoutes = require("./routes/intentRoute");
-// app.use("/api/intent", intentRoutes);
-
-// 404 fallback
-
-
-// Server
+// ✅ Server start
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server ${PORT} portunda işləyir`);
