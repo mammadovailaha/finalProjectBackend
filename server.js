@@ -59,9 +59,9 @@ app.use("/api/quick-registrations", quickRegistrationRoutes);
 const examResultsRoutes = require("./routes/examResult");
 app.use("/api/exam-results", examResultsRoutes);
 
-// INTENT ROUTES (əgər bu ES6 ilə yazılıbsa → module.exports ilə export et)
-const intentRoutes = require("./routes/intentRoute");
-app.use("/api/intents", intentRoutes);
+// // INTENT ROUTES (əgər bu ES6 ilə yazılıbsa → module.exports ilə export et)
+// const intentRoutes = require("./routes/intentRoute");
+// app.use("/api/intent", intentRoutes);
 
 // 404 fallback
 app.use((req, res) => {

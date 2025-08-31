@@ -19,5 +19,10 @@ router.put("/:id", updateService);
 
 // Servisi ID-ə görə sil
 router.delete("/:id", deleteService);
-
+console.log("📋 Controller funksiyaları:", {
+  getAllServices: typeof getAllServices,
+  createService: typeof createService,
+  updateService: typeof updateService,
+  deleteService: typeof deleteService
+});
 module.exports = router;
